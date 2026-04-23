@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mannspanelet — Podcasten om mannens rolle i Norge</title>
+  <meta name="description" content="To menn. Ærlige samtaler. Mannspanelet er podcasten der Gunnar og Thomas tar opp det ingen andre tør å snakke om.">
+  <meta property="og:title" content="Mannspanelet">
+  <meta property="og:description" content="To menn. Ærlige samtaler.">
+  <meta property="og:image" content="hero-desktop.jpg">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── RESET & BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:      #C8202A;
+      --red-dark: #9e1921;
+      --dark:     #0A0A0A;
+      --dark-2:   #111111;
+      --dark-3:   #1a1a1a;
+      --offwhite: #E8E0D5;
+      --grey:     #888880;
+      --silver:   #b0b0b0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--offwhite);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, transparent 100%);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      color: var(--offwhite);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--silver);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--offwhite); }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('hero-desktop.jpg');
+      background-size: cover;
+      background-position: center top;
+      transform: scale(1.03);
+      transition: transform 8s ease-out;
+    }
+
+    .hero-bg.loaded { transform: scale(1); }
+
+    /* Mobile hero image */
+    @media (max-width: 768px) {
+      .hero-bg {
+        background-image: url('hero-mobile.jpg');
+        background-position: center center;
+      }
+    }
+
+    /* Gradient bottom vignette */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.15) 0%,
+        rgba(10,10,10,0.0) 30%,
+        rgba(10,10,10,0.6) 65%,
+        rgba(10,10,10,0.97) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 3rem 2rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Silver-metal gradient on the title */
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 14vw, 11rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      background: linear-gradient(
+        160deg,
+        #ffffff 0%,
+        #d8d8d8 20%,
+        #a0a0a0 40%,
+        #c8c8c8 55%,
+        #888888 70%,
+        #b0b0b0 85%,
+        #e0e0e0 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+      animation: fadeUp 0.8s ease-out both;
+    }
+
+    .hero-sub {
+      font-family: 'Barlow', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1.05rem);
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-bottom: 0.9rem;
+      animation: fadeUp 0.8s 0.15s ease-out both;
+    }
+
+    .hero-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      font-weight: 300;
+      color: var(--offwhite);
+      max-width: 520px;
+      margin-bottom: 2.2rem;
+      animation: fadeUp 0.8s 0.25s ease-out both;
+    }
+
+    .hero-tagline em {
+      font-style: italic;
+      color: var(--silver);
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s 0.4s ease-out both;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.8rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-red {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .btn-red:hover {
+      background: var(--red-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--offwhite);
+      border: 1px solid rgba(232, 224, 213, 0.35);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--offwhite);
+      background: rgba(232, 224, 213, 0.06);
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 5rem 2rem; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      letter-spacing: 0.05em;
+      color: var(--offwhite);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ─── OM PODCASTEN ─── */
+    .about {
+      background: var(--dark-2);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: rgba(232, 224, 213, 0.8);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-text p:last-child { margin-bottom: 0; }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .stat {
+      background: var(--dark-2);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--red);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    /* ─── BIO ─── */
+    .bios {
+      background: var(--dark);
+    }
+
+    .bio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 3rem;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .bio-card {
+      background: var(--dark-2);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bio-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--red);
+    }
+
+    .bio-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.05em;
+      color: var(--offwhite);
+      margin-bottom: 0.2rem;
+    }
+
+    .bio-age {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+
+    .bio-text {
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: rgba(232, 224, 213, 0.75);
+    }
+
+    /* ─── EPISODER ─── */
+    .episodes {
+      background: var(--dark-3);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .episode-list {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .episode-item {
+      display: grid;
+      grid-template-columns: 3rem 1fr auto;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.4rem 1.6rem;
+      background: var(--dark-2);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.18s;
+      cursor: default;
+    }
+
+    .episode-item:hover {
+      background: #161616;
+    }
+
+    .episode-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .episode-info {}
+
+    .episode-title {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--offwhite);
+      margin-bottom: 0.2rem;
+    }
+
+    .episode-desc {
+      font-size: 0.82rem;
+      color: var(--grey);
+      font-weight: 300;
+    }
+
+    .episode-badge {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--grey);
+      border: 1px solid rgba(136,136,128,0.3);
+      padding: 0.25rem 0.6rem;
+      white-space: nowrap;
+    }
+
+    /* ─── LYTT ─── */
+    .listen {
+      background: var(--dark);
+      text-align: center;
+    }
+
+    .listen h2 { margin-bottom: 0.5rem; }
+
+    .listen-sub {
+      font-size: 1rem;
+      color: var(--grey);
+      margin-bottom: 2.5rem;
+    }
+
+    .platform-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-platform {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 1rem 2rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--offwhite);
+      background: var(--dark-2);
+      transition: all 0.2s;
+    }
+
+    .btn-platform:hover {
+      border-color: rgba(255,255,255,0.3);
+      background: var(--dark-3);
+      transform: translateY(-2px);
+    }
+
+    .btn-platform svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ─── KONTAKT ─── */
+    .contact {
+      background: var(--dark-2);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .contact-info p {
+      font-size: 0.95rem;
+      color: rgba(232, 224, 213, 0.7);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-email {
+      display: inline-block;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--offwhite);
+      text-decoration: none;
+      border-bottom: 1px solid var(--red);
+      padding-bottom: 2px;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      background: var(--dark-3);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--offwhite);
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      padding: 0.9rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+      width: 100%;
+    }
+
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder {
+      color: rgba(136,136,128,0.6);
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: rgba(200, 32, 42, 0.5);
+    }
+
+    .contact-form textarea { height: 130px; }
+
+    .form-success {
+      display: none;
+      color: var(--red);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.12em;
+      color: rgba(232, 224, 213, 0.4);
+    }
+
+    .footer-copy {
+      font-size: 0.75rem;
+      color: rgba(136,136,128,0.5);
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+      margin: 0;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .about-grid,
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+    }
+
+    @media (max-width: 680px) {
+      nav { padding: 1rem 1.2rem; }
+
+      .nav-links {
+        display: none; /* Mobile: no nav links — just logo */
+      }
+
+      section { padding: 3.5rem 1.2rem; }
+
+      .hero-content { padding: 2rem 1.2rem 3rem; }
+
+      .bio-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bio-card { padding: 1.8rem 1.4rem; }
+
+      .episode-item {
+        grid-template-columns: 2.5rem 1fr;
+        padding: 1.1rem 1rem;
+      }
+
+      .episode-badge { display: none; }
+
+      .about-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav>
+    <a href="#" class="nav-logo">Mannspanelet</a>
+    <ul class="nav-links">
+      <li><a href="#om">Om podcasten</a></li>
+      <li><a href="#episoder">Episoder</a></li>
+      <li><a href="#lytt">Lytt</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero" id="hjem">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-content">
+      <p class="hero-sub">Sesong 1 — Nå tilgjengelig</p>
+      <h1 class="hero-title">Manns&shy;panelet</h1>
+      <p class="hero-tagline">
+        To menn. Ærlige samtaler.<br>
+        <em>Om mannens rolle i Norge anno 2026.</em>
+      </p>
+      <div class="hero-buttons">
+        <a href="#lytt" class="btn btn-red">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+          Lytt nå
+        </a>
+        <a href="#om" class="btn btn-outline">Mer om oss</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── OM PODCASTEN ─── -->
+  <section class="about" id="om">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <span class="section-label">Om podcasten</span>
+          <h2>Ærlige samtaler fra garderoben</h2>
+          <p>
+            Mannspanelet er podcasten der vi snakker om det som faktisk skjer — i hjem, på jobb, i samfunnet. Ikke slik vi burde snakke om det. Slik vi faktisk gjør det.
+          </p>
+          <p>
+            Gunnar (52) og Thomas (45) setter seg ned og tar opp temaer som preger norske menn i dag. Fedrerollen. Arbeidsliv. Identitet. Relasjoner. Det som er vanskelig å si høyt.
+          </p>
+          <p>
+            Ingen agenda. Ingen fasitsvar. Bare to menn som mener noe — og ikke er redd for å si det.
+          </p>
+        </div>
+        <div class="about-stats">
+          <div class="stat">
+            <span class="stat-number">10</span>
+            <span class="stat-label">Episoder</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">S1</span>
+            <span class="stat-label">Sesong</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">2</span>
+            <span class="stat-label">Verter</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">NO</span>
+            <span class="stat-label">Norsk</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── BIO ─── -->
+  <section class="bios" id="verter">
+    <div class="container">
+      <span class="section-label">Hvem er vi</span>
+      <h2>Gunnar &amp; Thomas</h2>
+      <div class="bio-grid">
+        <div class="bio-card">
+          <div class="bio-name">Thomas</div>
+          <span class="bio-age">45 år</span>
+          <p class="bio-text">
+            Thomas kom til podcasten med én tanke: at det mangler arenaer der menn kan snakke ærlig. Ikke terapeutisk. Ikke politisk korrekt. Bare ekte. Han bringer skarphet, nysgjerrighet og vilje til å utfordre det etablerte bildet av hva en mann skal være i 2026.
+          </p>
+        </div>
+        <div class="bio-card">
+          <div class="bio-name">Gunnar</div>
+          <span class="bio-age">52 år</span>
+          <p class="bio-text">
+            Gunnar har levd nok til å vite at enkle svar sjelden stemmer. Han bringer erfaring, ro og evne til å se flere sider av en sak — uten å miste egne meninger. I garderoben sier han det han faktisk mener. Det er derfor han er her.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── EPISODER ─── -->
+  <section class="episodes" id="episoder">
+    <div class="container">
+      <span class="section-label">Sesong 1</span>
+      <h2>Alle episoder</h2>
+      <div class="episode-list">
+
+        <div class="episode-item">
+          <span class="episode-num">01</span>
+          <div class="episode-info">
+            <div class="episode-title">Hvorfor starter vi dette?</div>
+            <div class="episode-desc">Om behovet for en norsk mannspodcast — og hva vi ønsker å si.</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">02</span>
+          <div class="episode-info">
+            <div class="episode-title">Fedrerollen i endring</div>
+            <div class="episode-desc">Hva forventes av norske fedre — og hva forventer vi av oss selv?</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">03</span>
+          <div class="episode-info">
+            <div class="episode-title">Arbeid og identitet</div>
+            <div class="episode-desc">Når jobben definerer deg — og hva som skjer når den forsvinner.</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">04</span>
+          <div class="episode-info">
+            <div class="episode-title">Relasjoner mellom menn</div>
+            <div class="episode-desc">Vennskap, konkurranse og det vi ikke sier til hverandre.</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">05</span>
+          <div class="episode-info">
+            <div class="episode-title">Helse og mannsstolthet</div>
+            <div class="episode-desc">Hvorfor lar vi vær å gå til legen — og hva koster det oss?</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">06</span>
+          <div class="episode-info">
+            <div class="episode-title">Skilsmisse og det som etter</div>
+            <div class="episode-desc">Hva skjer med menn når familiestrukturen kollapser?</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">07</span>
+          <div class="episode-info">
+            <div class="episode-title">Seksualitet og taushet</div>
+            <div class="episode-desc">Det vi egentlig tenker, men sjelden sier.</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">08</span>
+          <div class="episode-info">
+            <div class="episode-title">Rus, risiko og råskap</div>
+            <div class="episode-desc">Hvorfor tar menn dårligere valg — og er det egentlig bare dårlig?</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">09</span>
+          <div class="episode-info">
+            <div class="episode-title">Alderdom og arv</div>
+            <div class="episode-desc">Hva vil vi etterlate oss? Hva slags menn vil vi ha vært?</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+        <div class="episode-item">
+          <span class="episode-num">10</span>
+          <div class="episode-info">
+            <div class="episode-title">Hva er en mann i 2026?</div>
+            <div class="episode-desc">Sesongfinale. Vi forsøker å svare på spørsmålet vi startet med.</div>
+          </div>
+          <span class="episode-badge">Sesong 1</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── LYTT ─── -->
+  <section class="listen" id="lytt">
+    <div class="container">
+      <span class="section-label">Finn oss</span>
+      <h2>Lytt der du hører på podcast</h2>
+      <p class="listen-sub">Tilgjengelig på alle store plattformer</p>
+      <div class="platform-buttons">
+
+        <!-- Spotify -->
+        <a href="#" class="btn-platform" title="Lytt på Spotify">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.318c-.212.332-.663.436-.994.222-2.723-1.664-6.148-2.04-10.184-1.117-.388.09-.775-.152-.864-.54-.09-.39.152-.776.54-.865 4.415-1.007 8.197-.574 11.28 1.29.332.212.435.663.222.994zm1.47-3.27c-.268.42-.836.55-1.256.282-3.116-1.914-7.863-2.469-11.549-1.35-.476.143-.977-.127-1.122-.603-.143-.476.127-.977.603-1.122 4.212-1.28 9.442-.659 13.03 1.54.42.268.55.836.282 1.256zm.127-3.404c-3.735-2.218-9.899-2.42-13.467-1.34-.572.173-1.176-.148-1.35-.72-.173-.573.148-1.177.72-1.35 4.097-1.243 10.91-1.003 15.219 1.55.516.306.685.967.379 1.483-.305.516-.966.685-1.483.379z"/>
+          </svg>
+          Spotify
+        </a>
+
+        <!-- Apple Podcasts -->
+        <a href="#" class="btn-platform" title="Lytt på Apple Podcasts">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 4.5c2.07 0 3.75 1.68 3.75 3.75 0 1.02-.41 1.944-1.07 2.62.75.6 1.32 1.43 1.32 2.38v.27c0 .165-.015.33-.045.49.67.28 1.2.87 1.44 1.61.09.28.14.58.14.89 0 1.66-1.34 3-3 3H9.465c-1.66 0-3-1.34-3-3 0-.31.05-.61.14-.89.24-.74.77-1.33 1.44-1.61-.03-.16-.045-.325-.045-.49v-.27c0-.95.57-1.78 1.32-2.38-.66-.676-1.07-1.6-1.07-2.62C8.25 6.18 9.93 4.5 12 4.5zm0 1.5c-1.24 0-2.25 1.01-2.25 2.25S10.76 10.5 12 10.5s2.25-1.01 2.25-2.25S13.24 6 12 6zm0 6c-.83 0-1.5.67-1.5 1.5v.75c0 .414.336.75.75.75h1.5c.414 0 .75-.336.75-.75V13.5c0-.83-.67-1.5-1.5-1.5zm-2.535 4.5c-.81 0-1.465.655-1.465 1.465S8.655 19.5 9.465 19.5h5.07c.81 0 1.465-.655 1.465-1.465S15.345 16.5 14.535 16.5H9.465z"/>
+          </svg>
+          Apple Podcasts
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ─── KONTAKT ─── -->
+  <section class="contact" id="kontakt">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <span class="section-label">Kontakt</span>
+          <h2>Ta kontakt</h2>
+          <p>
+            Har du et tema du vil vi skal ta opp? Ønsker du å samarbeide? Eller vil du bare si at du liker det vi gjør?
+          </p>
+          <p>
+            Vi leser alle henvendelser.
+          </p>
+          <a href="mailto:hei@mannspanelet.no" class="contact-email">hei@mannspanelet.no</a>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <input type="text" name="navn" placeholder="Navn" required autocomplete="name">
+          <input type="email" name="epost" placeholder="E-post" required autocomplete="email">
+          <input type="text" name="emne" placeholder="Emne">
+          <textarea name="melding" placeholder="Melding" required></textarea>
+          <button type="submit" class="btn btn-red">Send melding</button>
+          <p class="form-success" id="formSuccess">✓ Meldingen er sendt. Takk!</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <span class="footer-logo">Mannspanelet</span>
+    <span class="footer-copy">© 2026 Mannspanelet. Alle rettigheter forbeholdt.</span>
+  </footer>
+
+  <script>
+    // Hero image parallax load animation
+    window.addEventListener('load', () => {
+      document.getElementById('heroBg').classList.add('loaded');
+    });
+
+    // Simple contact form — mailto fallback
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = new FormData(this);
+      const navn = data.get('navn');
+      const epost = data.get('epost');
+      const emne = data.get('emne') || 'Henvendelse fra mannspanelet.no';
+      const melding = data.get('melding');
+
+      const mailtoLink = `mailto:hei@mannspanelet.no?subject=${encodeURIComponent(emne)}&body=${encodeURIComponent(`Fra: ${navn} (${epost})\n\n${melding}`)}`;
+      window.location.href = mailtoLink;
+
+      document.getElementById('formSuccess').style.display = 'block';
+      this.reset();
+    });
+
+    // Smooth nav highlight on scroll (optional enhancement)
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--offwhite)' : '';
+      });
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
